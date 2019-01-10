@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: spring-boot-demo
+    admin:
+      enabled: true
+  profiles:
+    active: dev
+  boot:
+    admin:
+      client:
+        url: http://localhost:8001
+server:
+  port: 8001
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
