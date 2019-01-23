@@ -42,6 +42,14 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>github-repo</id>
+            <name>My github Repository</name>
+            <url>https://github.com/yunzhongshu/maven-repo/master/repository</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -61,6 +69,9 @@
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <arguments>
+                        -Dmaven.javadoc.skip=true
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>
