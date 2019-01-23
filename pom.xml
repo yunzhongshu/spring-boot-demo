@@ -46,7 +46,7 @@
         <repository>
             <id>github-repo</id>
             <name>My github Repository</name>
-            <url>https://github.com/yunzhongshu/maven-repo/master/repository</url>
+            <url>file:///Users/zhangyunyun/Code/maven-repo/repository</url>
         </repository>
     </distributionManagement>
 
