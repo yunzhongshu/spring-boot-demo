@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <!-- include logback base.xml with appender: console and file(which read from environment logging.file), root to appender: console and file -->
+    <!-- if you set you're own root appenders , remove it
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>   -->
+
+
+    <!-- read properties from spring environment -->
+    <springProperty scope="context" name="PROJECT_NAME" source="spring.application.name"/>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${PROJECT_NAME}.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_PATH}/${PROJECT_NAME}_%d{dd-MM-yyyy}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>  <!-- preserve log file count -->
+            <totalSizeCap>100MB</totalSizeCap> <!-- total size capacity -->
+        </rollingPolicy>
+    </appender>
+
+
+    <!-- default root config -->
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="PROJECT" />
+    </root>
+
+
+    <springProfile name="dev">
+        <!-- when spring.profiles.active=dev, it is effective -->
+        <root level="debug">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="PROJECT" />
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <!-- when spring.profiles.active=prod, it is effective -->
+        <root level="warn">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="PROJECT" />
+        </root>
+    </springProfile>
+
+
+</Configuration>
