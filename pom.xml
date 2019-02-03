@@ -5,6 +5,7 @@
     <modules>
         <module>demo-boot</module>
         <module>demo-admin-client</module>
+        <module>demo-middleware</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

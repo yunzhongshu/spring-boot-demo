@@ -64,7 +64,7 @@ public class RedisAutoConfiguration {
 
 存在RedisOperations.class(该类在包spring-boot-starter-data-redis中存在), 并且@import了LettuceConnectionConfiguration,JedisConnectionConfiguration类, 通过引入的jar来确定使用哪种redis连接方式，读取redis的连接属性及其他相关属性.
 
-> LettuceConnectionConfiguration使用Netty,线程安全呢；JedisConnectionConfiguration线程不安全，需要用连接池. 因此建议使用LettuceConnectionConfiguration. spring-boot-starter-data-redis默认引入了lettuce包
+> LettuceConnectionConfiguration使用Netty,线程安全；JedisConnectionConfiguration线程不安全，需要用连接池. 因此建议使用LettuceConnectionConfiguration. spring-boot-starter-data-redis默认引入了lettuce包，因此会默认加载LettuceConnectionConfiguration.class, 因为加载条件为@ConditionalOnClass(RedisClient.class), 而JedisConnectionConfiguration:@ConditionalOnClass({ GenericObjectPool.class, JedisConnection.class, Jedis.class }) 需要引入jedis包
 
 > 注：以上类的初始化需要在application.properties(application.yml)中配置redis相关属性，配置信息见类: RedisProperties.class.  以spring.redis.开头
 
