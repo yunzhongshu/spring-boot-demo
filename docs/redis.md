@@ -5,9 +5,15 @@
 Pom.xml 添加:
 
 ```xml
-        <dependency>
+        <!-- 自动配置 -->
+		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+		<!-- redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 ```
 
@@ -56,7 +62,9 @@ public class RedisAutoConfiguration {
 }
 ```
 
-该类在没有其他redisTemplate实例和 stringRedisTemplate的时候会执行, 并且@import了JedisConnectionConfiguration类,该类也注入了RedisConnectionFactory（redis的连接工厂类），读取redis的连接属性及其他相关属性.
+存在RedisOperations.class(该类在包spring-boot-starter-data-redis中存在), 并且@import了LettuceConnectionConfiguration,JedisConnectionConfiguration类, 通过引入的jar来确定使用哪种redis连接方式，读取redis的连接属性及其他相关属性.
+
+> LettuceConnectionConfiguration使用Netty,线程安全呢；JedisConnectionConfiguration线程不安全，需要用连接池. 因此建议使用LettuceConnectionConfiguration. spring-boot-starter-data-redis默认引入了lettuce包
 
 > 注：以上类的初始化需要在application.properties(application.yml)中配置redis相关属性，配置信息见类: RedisProperties.class.  以spring.redis.开头
 
@@ -67,10 +75,10 @@ application.properties范例:
 #spring.redis.sentinel.nodes = xx.xx.xx.xx:7379,xx.xx.xx.xx:7479,xx.xx.xx.xx:7579
 #spring.redis.sentinel.master = xxx
 #spring.redis.database = 1
-spring.redis.host = 192.168.66.37
+spring.redis.host = 127.0.0.1
 spring.redis.port = 6379
 spring.redis.password = xxxx
-spring.redis.database = 3
+spring.redis.database = 0
 ```
 
 
