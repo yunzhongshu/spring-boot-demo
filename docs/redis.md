@@ -61,7 +61,17 @@ public class RedisAutoConfiguration {
 > 注：以上类的初始化需要在application.properties(application.yml)中配置redis相关属性，配置信息见类: RedisProperties.class.  以spring.redis.开头
 
 
-
+application.properties范例:
+```
+#spring.redis.password = xxxx
+#spring.redis.sentinel.nodes = xx.xx.xx.xx:7379,xx.xx.xx.xx:7479,xx.xx.xx.xx:7579
+#spring.redis.sentinel.master = xxx
+#spring.redis.database = 1
+spring.redis.host = 192.168.66.37
+spring.redis.port = 6379
+spring.redis.password = xxxx
+spring.redis.database = 3
+```
 
 
 
