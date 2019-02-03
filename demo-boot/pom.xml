@@ -11,6 +11,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.zmdj</groupId>
+            <artifactId>demo-middleware</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
