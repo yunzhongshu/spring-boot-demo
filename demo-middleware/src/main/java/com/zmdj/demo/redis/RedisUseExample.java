@@ -1,11 +1,14 @@
 package com.zmdj.demo.redis;
 
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -18,12 +21,12 @@ import javax.annotation.Resource;
  * @author zhangyunyun create on 2019/2/3
  */
 @Service
-public class RedisUseStringExample {
+public class RedisUseExample {
 
     @Resource
     private StringRedisTemplate redisTemplate;
 
-    public void examples(String key, String value) {
+    public void stringExample(String key, String value) {
 
         // set key value
         redisTemplate.opsForValue().set(key, value);
@@ -100,5 +103,63 @@ public class RedisUseStringExample {
 
     }
 
+    public void hashesExample() {
+
+        HashOperations hashOperations = redisTemplate.opsForHash();
+
+        String key = "user:1000";
+
+        // hmset user:1000 username antirez birthyear 1977 verified 1
+        hashOperations.putAll(key, new HashMap(){
+            {
+                put("username", "antirez");
+                put("birthyear", 1977);
+                put("verified", 1);
+            }
+        });
+
+        // hget user:1000 username
+        String userName = hashOperations.get(key, "username").toString();
+
+        // hget user:1000 username birthyear verified
+        List<String> valueList = hashOperations.multiGet(key, new ArrayList(){
+            {
+                add("username");
+                add("birthyear");
+                add("verified");
+            }
+        });
+
+        // hgetall user:1000
+        valueList = hashOperations.values(key);
+
+        // hincrby user:1000 birthyear 10
+        hashOperations.increment(key, "birthyear", 10);
+
+    }
+
+
+    public void listExample() {
+
+        ListOperations listOperations = redisTemplate.opsForList();
+
+        String key = "list";
+
+        // lpush list value1
+        listOperations.leftPush(key, "value1");
+        // lpush list value2 value3
+        listOperations.leftPush(key, "value2", "value3");
+
+        // lpush list value4, value5, value6
+        listOperations.leftPushAll(key, new String[] {"value4", "value5", "value6"});
+
+        // rpush
+        listOperations.rightPush(key, "value7");
+
+        // ... much the same as lpush
+
+
+
+    }
 
 }

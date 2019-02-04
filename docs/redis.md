@@ -83,4 +83,127 @@ spring.redis.database = 0
 
 
 
+### 代码中使用
+
+```java
+// 注入redisTemplate, 
+// 使用 StringRedisTemplate， 默认采用的是String的序列化策略;
+// 使用 RedisTemplate, 默认采用的是JDK的序列化策略;
+@Resource
+private StringRedisTemplate redisTemplate;  
+```
+
+#### strings 操作
+
+```java
+
+        // set key value
+        redisTemplate.opsForValue().set(key, value);
+
+        // set key value px 10000
+
+        redisTemplate.opsForValue().set(key, value, 10000L, TimeUnit.MILLISECONDS);
+
+        // set key value ex 10
+        redisTemplate.opsForValue().set(key, value, 10, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(10));
+
+        // set key value nx
+        redisTemplate.opsForValue().setIfAbsent(key, value);
+
+        // set key value nx ex 10
+        redisTemplate.opsForValue().setIfAbsent(key, value, 10, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().setIfAbsent(key, value, Duration.ofSeconds(10));
+
+        // set key value xx
+        redisTemplate.opsForValue().setIfPresent(key, value);
+
+        // set key value xx ex 10
+        redisTemplate.opsForValue().setIfPresent(key, value, 10, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().setIfPresent(key, value, Duration.ofSeconds(10));
+
+        // get key
+        redisTemplate.opsForValue().get(key);
+
+        // incr key
+        redisTemplate.opsForValue().increment(key);
+
+        // incrby key 2
+        redisTemplate.opsForValue().increment(key, 2);
+
+        // decr key
+        redisTemplate.opsForValue().decrement(key);
+
+        // decr key 2
+        redisTemplate.opsForValue().decrement(key, 2);
+
+        // getset key value; set a key to a newvalue, returning the old value as the result.
+        String oldValue = redisTemplate.opsForValue().getAndSet(key, value);
+
+        // mset key1 value1 key2 value2
+        String key2 = "key2";
+        String value2 = "value2";
+        redisTemplate.opsForValue().multiSet(new HashMap<String, String>(){
+            {
+                put(key, value);
+                put(key2, value2);
+            }
+        });
+
+        // mget key1 key2
+        redisTemplate.opsForValue().multiGet(new ArrayList<String>(){
+            {
+                add(key);
+                add(key2);
+            }
+        });
+
+        // del key
+        redisTemplate.delete(key);
+
+        // type key
+        redisTemplate.type(key);
+
+        // expire key 10
+        redisTemplate.expire(key, 10, TimeUnit.SECONDS);
+
+        // persist key
+        redisTemplate.persist(key);
+
+```
+
+#### hashes 操作
+
+```java
+        HashOperations hashOperations = redisTemplate.opsForHash();
+
+        String key = "user:1000";
+
+        // hmset user:1000 username antirez birthyear 1977 verified 1
+        hashOperations.putAll(key, new HashMap(){
+            {
+                put("username", "antirez");
+                put("birthyear", 1977);
+                put("verified", 1);
+            }
+        });
+
+        // hget user:1000 username
+        String userName = hashOperations.get(key, "username").toString();
+
+        // hget user:1000 username birthyear verified
+        List<String> valueList = hashOperations.multiGet(key, new ArrayList(){
+            {
+                add("username");
+                add("birthyear");
+                add("verified");
+            }
+        });
+
+        // hgetall user:1000
+        valueList = hashOperations.values(key);
+
+        // hincrby user:1000 birthyear 10
+        hashOperations.increment(key, "birthyear", 10);
+```
 
