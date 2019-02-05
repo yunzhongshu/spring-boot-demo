@@ -2,6 +2,7 @@ package com.zmdj.demo.redis;
 
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -157,8 +159,69 @@ public class RedisUseExample {
         listOperations.rightPush(key, "value7");
 
         // ... much the same as lpush
+        long start = 0;
+        long end = 100;
+        // lrange list 0 100
+        List<String> valueList = listOperations.range(key, start, end);
 
+        // rpop list
+        Object value = listOperations.rightPop(key);
 
+        // brpop list 10
+        value = listOperations.rightPop(key, 10000L, TimeUnit.MILLISECONDS);
+
+        // lpop list
+        value = listOperations.leftPop(key);
+
+        // blpop list 10
+        value = listOperations.leftPop(key, 10000L, TimeUnit.MILLISECONDS);
+
+        // rpoplpush list list2
+        value = listOperations.rightPopAndLeftPush(key, "list2");
+
+        // brpoplpush list list2 10
+        value = listOperations.rightPopAndLeftPush(key, "list2", 10000L, TimeUnit.MILLISECONDS);
+
+        // rpushx list value1
+        Long ret = listOperations.rightPushIfPresent(key, "value1");
+
+        // lpushx list value2
+        ret = listOperations.leftPushIfPresent(key, "value2");
+
+        // ltrim list 0 5
+        listOperations.trim(key, 0, 5);
+
+        // llen list
+        listOperations.size(key);
+
+    }
+
+    public void setExample() {
+
+        String key = "myset";
+
+        SetOperations setOperations = redisTemplate.opsForSet();
+
+        // sadd myset value1 value2
+        setOperations.add(key, "value1", "value2");
+
+        // smembers myset
+        Set<String> valueSet = setOperations.members(key);
+
+        // ismember myset
+        boolean ret = setOperations.isMember(key, "value1");
+
+        // sinter myset myset1
+        valueSet = setOperations.intersect(key, "myset1");
+
+        // sinterstore myset myset1 myset2
+        setOperations.intersectAndStore(key, "myset1", "myset2");
+
+        // spop myset 3
+        List<String> valueList = setOperations.pop(key, 3);
+
+        // srandmember myset 3
+        valueList = setOperations.randomMembers(key, 3);
 
     }
 
