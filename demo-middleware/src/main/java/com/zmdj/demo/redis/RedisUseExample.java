@@ -1,9 +1,15 @@
 package com.zmdj.demo.redis;
 
+import org.springframework.data.redis.connection.BitFieldSubCommands;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -223,6 +229,63 @@ public class RedisUseExample {
         // srandmember myset 3
         valueList = setOperations.randomMembers(key, 3);
 
+    }
+
+
+    public void sortedSetExample() {
+        String key = "myzset";
+
+        ZSetOperations zSetOperations = redisTemplate.opsForZSet();
+
+        // zadd myzset value1 10001
+        boolean ret = zSetOperations.add(key, "value1", 1001d);
+
+        // zrange myzset 0 5
+        Set<String> valueSet = zSetOperations.range(key, 0, 5);
+
+        // zrangebyscore myzset 1001 1004
+        valueSet = zSetOperations.rangeByScore(key, 1001d, 1004d);
+
+        // zrangebyscore myzset 1001 1004 withscores
+        Set<ZSetOperations.TypedTuple> typedTupleSet = zSetOperations.rangeByScoreWithScores(key, 1001d, 1004d);
+
+        // zrevrange myzset 0 5
+        zSetOperations.reverseRange(key, 0, 5);
+
+        // zrangebylex myzset (A E
+        zSetOperations.rangeByLex(key, new RedisZSetCommands.Range().gt("A").lte("E"));
+
+        // zrank myzset value1
+        long rank = zSetOperations.rank(key, "value1");
+
+        // zrevrank myzset value1
+        rank = zSetOperations.reverseRank(key, "value1");
+
+
+    }
+
+    public void bitmapExample() {
+
+        String key = "bitmap";
+
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        // setbit 100 1
+        valueOperations.setBit(key, 100, true);
+
+        // getbit 55
+        boolean bit = valueOperations.getBit(key, 55);
+
+        // bitcount key
+        String value = valueOperations.get(key).toString();
+        redisTemplate.execute((RedisCallback) con ->
+            con.bitCount(value.getBytes())
+        );
+
+        // bitop and dest dest1 dest2
+        byte[] dest = new byte[1024];
+        redisTemplate.execute((RedisCallback) con ->
+            con.bitOp(RedisStringCommands.BitOperation.AND, dest, "value1".getBytes(), "value2".getBytes())
+        );
     }
 
 }

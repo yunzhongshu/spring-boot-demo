@@ -207,3 +207,146 @@ private StringRedisTemplate redisTemplate;
         hashOperations.increment(key, "birthyear", 10);
 ```
 
+#### Lists操作
+
+```java
+
+        ListOperations listOperations = redisTemplate.opsForList();
+
+        String key = "list";
+
+        // lpush list value1
+        listOperations.leftPush(key, "value1");
+        // lpush list value2 value3
+        listOperations.leftPush(key, "value2", "value3");
+
+        // lpush list value4, value5, value6
+        listOperations.leftPushAll(key, new String[] {"value4", "value5", "value6"});
+
+        // rpush
+        listOperations.rightPush(key, "value7");
+
+        // ... much the same as lpush
+        long start = 0;
+        long end = 100;
+        // lrange list 0 100
+        List<String> valueList = listOperations.range(key, start, end);
+
+        // rpop list
+        Object value = listOperations.rightPop(key);
+
+        // brpop list 10
+        value = listOperations.rightPop(key, 10000L, TimeUnit.MILLISECONDS);
+
+        // lpop list
+        value = listOperations.leftPop(key);
+
+        // blpop list 10
+        value = listOperations.leftPop(key, 10000L, TimeUnit.MILLISECONDS);
+
+        // rpoplpush list list2
+        value = listOperations.rightPopAndLeftPush(key, "list2");
+
+        // brpoplpush list list2 10
+        value = listOperations.rightPopAndLeftPush(key, "list2", 10000L, TimeUnit.MILLISECONDS);
+
+        // rpushx list value1
+        Long ret = listOperations.rightPushIfPresent(key, "value1");
+
+        // lpushx list value2
+        ret = listOperations.leftPushIfPresent(key, "value2");
+
+        // ltrim list 0 5
+        listOperations.trim(key, 0, 5);
+
+        // llen list
+        listOperations.size(key);
+```
+
+#### sets操作
+
+```java
+        String key = "myset";
+
+        SetOperations setOperations = redisTemplate.opsForSet();
+
+        // sadd myset value1 value2
+        setOperations.add(key, "value1", "value2");
+
+        // smembers myset
+        Set<String> valueSet = setOperations.members(key);
+
+        // ismember myset
+        boolean ret = setOperations.isMember(key, "value1");
+
+        // sinter myset myset1
+        valueSet = setOperations.intersect(key, "myset1");
+
+        // sinterstore myset myset1 myset2
+        setOperations.intersectAndStore(key, "myset1", "myset2");
+
+        // spop myset 3
+        List<String> valueList = setOperations.pop(key, 3);
+
+        // srandmember myset 3
+        valueList = setOperations.randomMembers(key, 3);
+```
+
+#### sorted sets操作
+
+```java
+        String key = "myzset";
+
+        ZSetOperations zSetOperations = redisTemplate.opsForZSet();
+
+        // zadd myzset value1 10001
+        boolean ret = zSetOperations.add(key, "value1", 1001d);
+
+        // zrange myzset 0 5
+        Set<String> valueSet = zSetOperations.range(key, 0, 5);
+
+        // zrangebyscore myzset 1001 1004
+        valueSet = zSetOperations.rangeByScore(key, 1001d, 1004d);
+
+        // zrangebyscore myzset 1001 1004 withscores
+        Set<ZSetOperations.TypedTuple> typedTupleSet = zSetOperations.rangeByScoreWithScores(key, 1001d, 1004d);
+
+        // zrevrange myzset 0 5
+        zSetOperations.reverseRange(key, 0, 5);
+
+        // zrangebylex myzset (A E
+        zSetOperations.rangeByLex(key, new RedisZSetCommands.Range().gt("A").lte("E"));
+
+        // zrank myzset value1
+        long rank = zSetOperations.rank(key, "value1");
+
+        // zrevrank myzset value1
+        rank = zSetOperations.reverseRank(key, "value1");
+
+```
+
+### bitmap操作
+
+```java
+        String key = "bitmap";
+
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        // setbit 100 1
+        valueOperations.setBit(key, 100, true);
+
+        // getbit 55
+        boolean bit = valueOperations.getBit(key, 55);
+
+        // bitcount key
+        String value = valueOperations.get(key).toString();
+        redisTemplate.execute((RedisCallback) con ->
+            con.bitCount(value.getBytes())
+        );
+
+        // bitop and dest dest1 dest2
+        byte[] dest = new byte[1024];
+        redisTemplate.execute((RedisCallback) con ->
+            con.bitOp(RedisStringCommands.BitOperation.AND, dest, "value1".getBytes(), "value2".getBytes())
+        );
+```
+
