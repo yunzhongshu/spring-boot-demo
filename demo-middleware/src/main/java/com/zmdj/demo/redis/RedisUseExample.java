@@ -1,9 +1,12 @@
 package com.zmdj.demo.redis;
 
-import org.springframework.data.redis.connection.BitFieldSubCommands;
+import org.springframework.data.geo.Point;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.connection.RedisZSetCommands;
+import org.springframework.data.redis.core.GeoOperations;
 import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.HyperLogLogOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.SetOperations;
@@ -211,6 +214,9 @@ public class RedisUseExample {
         // sadd myset value1 value2
         setOperations.add(key, "value1", "value2");
 
+        // scard myset
+        setOperations.size(key);
+
         // smembers myset
         Set<String> valueSet = setOperations.members(key);
 
@@ -287,5 +293,46 @@ public class RedisUseExample {
             con.bitOp(RedisStringCommands.BitOperation.AND, dest, "value1".getBytes(), "value2".getBytes())
         );
     }
+
+    public void hyperLogLogsExample() {
+
+        String key = "hll";
+
+        HyperLogLogOperations hyperLogLogOperations = redisTemplate.opsForHyperLogLog();
+
+        // pfadd hll a b c
+        hyperLogLogOperations.add(key, "a", "b", "c");
+
+        // pfcounnt hll
+        hyperLogLogOperations.size(key);
+
+
+    }
+
+
+    public void geoExample() {
+
+        String key = "geo";
+
+        GeoOperations geoOperations = redisTemplate.opsForGeo();
+
+        RedisGeoCommands.GeoLocation location1 = new RedisGeoCommands.GeoLocation("location1", new Point(111, 60));
+
+        RedisGeoCommands.GeoLocation location2 = new RedisGeoCommands.GeoLocation("location2", new Point(181, 50));
+
+        // geoadd geo 60 111 "location1"
+        geoOperations.add(key, location1);
+
+        geoOperations.add(key, location2);
+
+        // geodist geo location1 location2
+        geoOperations.distance(key, location1, location2);
+
+        // geopos geo location1 location2
+        geoOperations.position(key, location1, location2);
+    }
+
+
+
 
 }
