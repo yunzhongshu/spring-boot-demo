@@ -1,4 +1,4 @@
-package com.zmdj.demo.redis;
+package com.zmdj.demo.redis.datatypes;
 
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
@@ -32,7 +32,7 @@ import javax.annotation.Resource;
  * @author zhangyunyun create on 2019/2/3
  */
 @Service
-public class RedisUseExample {
+public class RedisDataTypesExample {
 
     @Resource
     private StringRedisTemplate redisTemplate;

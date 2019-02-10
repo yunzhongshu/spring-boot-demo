@@ -325,7 +325,7 @@ private StringRedisTemplate redisTemplate;
 
 ```
 
-### bitmap操作
+#### bitmap操作
 
 ```java
         String key = "bitmap";
@@ -348,5 +348,78 @@ private StringRedisTemplate redisTemplate;
         redisTemplate.execute((RedisCallback) con ->
             con.bitOp(RedisStringCommands.BitOperation.AND, dest, "value1".getBytes(), "value2".getBytes())
         );
+```
+
+#### hyperLogLog操作
+
+```java
+        String key = "hll";
+
+        HyperLogLogOperations hyperLogLogOperations = redisTemplate.opsForHyperLogLog();
+
+        // pfadd hll a b c
+        hyperLogLogOperations.add(key, "a", "b", "c");
+
+        // pfcounnt hll
+        hyperLogLogOperations.size(key);
+```
+
+#### geo操作
+
+```java
+        String key = "hll";
+
+        HyperLogLogOperations hyperLogLogOperations = redisTemplate.opsForHyperLogLog();
+
+        // pfadd hll a b c
+        hyperLogLogOperations.add(key, "a", "b", "c");
+
+        // pfcounnt hll
+        hyperLogLogOperations.size(key);
+```
+
+#### transactions操作
+
+```java
+      stringRedisTemplate.execute(new SessionCallback<Object>() {
+
+            @Nullable
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+
+                operations.multi();
+                // start transaction
+
+                ValueOperations valueOperations = operations.opsForValue();
+
+                valueOperations.increment("foo");
+
+                valueOperations.increment("bar");
+
+                operations.exec();
+
+                // when error execute  operations.discard();
+                return null;
+            }
+        });
+
+
+        // implement zpop
+        stringRedisTemplate.execute(new SessionCallback<Object>() {
+
+            @Nullable
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                String key = "zset";
+                operations.watch(key);
+
+                Set<Object> elements = operations.opsForZSet().range(key, 0, 0);
+
+                operations.multi();
+                operations.opsForZSet().remove(key, elements);
+                operations.exec();
+                return elements;
+            }
+        });
 ```
 
