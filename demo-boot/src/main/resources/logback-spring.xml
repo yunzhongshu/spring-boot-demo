@@ -45,7 +45,8 @@
 
     <springProfile name="dev">
         <!-- when spring.profiles.active=dev, it is effective -->
-        <root level="debug">
+        <root level="deimport org.springframework.context.annotation.Bean;
+bug">
             <appender-ref ref="STDOUT" />
             <appender-ref ref="PROJECT" />
         </root>

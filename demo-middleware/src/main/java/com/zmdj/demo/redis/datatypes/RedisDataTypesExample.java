@@ -35,57 +35,57 @@ import javax.annotation.Resource;
 public class RedisDataTypesExample {
 
     @Resource
-    private StringRedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     public void stringExample(String key, String value) {
 
         // set key value
-        redisTemplate.opsForValue().set(key, value);
+        stringRedisTemplate.opsForValue().set(key, value);
 
         // set key value px 10000
 
-        redisTemplate.opsForValue().set(key, value, 10000L, TimeUnit.MILLISECONDS);
+        stringRedisTemplate.opsForValue().set(key, value, 10000L, TimeUnit.MILLISECONDS);
 
         // set key value ex 10
-        redisTemplate.opsForValue().set(key, value, 10, TimeUnit.SECONDS);
-        redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(10));
+        stringRedisTemplate.opsForValue().set(key, value, 10, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(key, value, Duration.ofSeconds(10));
 
         // set key value nx
-        redisTemplate.opsForValue().setIfAbsent(key, value);
+        stringRedisTemplate.opsForValue().setIfAbsent(key, value);
 
         // set key value nx ex 10
-        redisTemplate.opsForValue().setIfAbsent(key, value, 10, TimeUnit.SECONDS);
-        redisTemplate.opsForValue().setIfAbsent(key, value, Duration.ofSeconds(10));
+        stringRedisTemplate.opsForValue().setIfAbsent(key, value, 10, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().setIfAbsent(key, value, Duration.ofSeconds(10));
 
         // set key value xx
-        redisTemplate.opsForValue().setIfPresent(key, value);
+        stringRedisTemplate.opsForValue().setIfPresent(key, value);
 
         // set key value xx ex 10
-        redisTemplate.opsForValue().setIfPresent(key, value, 10, TimeUnit.SECONDS);
-        redisTemplate.opsForValue().setIfPresent(key, value, Duration.ofSeconds(10));
+        stringRedisTemplate.opsForValue().setIfPresent(key, value, 10, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().setIfPresent(key, value, Duration.ofSeconds(10));
 
         // get key
-        redisTemplate.opsForValue().get(key);
+        stringRedisTemplate.opsForValue().get(key);
 
         // incr key
-        redisTemplate.opsForValue().increment(key);
+        stringRedisTemplate.opsForValue().increment(key);
 
         // incrby key 2
-        redisTemplate.opsForValue().increment(key, 2);
+        stringRedisTemplate.opsForValue().increment(key, 2);
 
         // decr key
-        redisTemplate.opsForValue().decrement(key);
+        stringRedisTemplate.opsForValue().decrement(key);
 
         // decr key 2
-        redisTemplate.opsForValue().decrement(key, 2);
+        stringRedisTemplate.opsForValue().decrement(key, 2);
 
         // getset key value; set a key to a newvalue, returning the old value as the result.
-        String oldValue = redisTemplate.opsForValue().getAndSet(key, value);
+        String oldValue = stringRedisTemplate.opsForValue().getAndSet(key, value);
 
         // mset key1 value1 key2 value2
         String key2 = "key2";
         String value2 = "value2";
-        redisTemplate.opsForValue().multiSet(new HashMap<String, String>(){
+        stringRedisTemplate.opsForValue().multiSet(new HashMap<String, String>(){
             {
                 put(key, value);
                 put(key2, value2);
@@ -93,7 +93,7 @@ public class RedisDataTypesExample {
         });
 
         // mget key1 key2
-        redisTemplate.opsForValue().multiGet(new ArrayList<String>(){
+        stringRedisTemplate.opsForValue().multiGet(new ArrayList<String>(){
             {
                 add(key);
                 add(key2);
@@ -101,22 +101,22 @@ public class RedisDataTypesExample {
         });
 
         // del key
-        redisTemplate.delete(key);
+        stringRedisTemplate.delete(key);
 
         // type key
-        redisTemplate.type(key);
+        stringRedisTemplate.type(key);
 
         // expire key 10
-        redisTemplate.expire(key, 10, TimeUnit.SECONDS);
+        stringRedisTemplate.expire(key, 10, TimeUnit.SECONDS);
 
         // persist key
-        redisTemplate.persist(key);
+        stringRedisTemplate.persist(key);
 
     }
 
     public void hashesExample() {
 
-        HashOperations hashOperations = redisTemplate.opsForHash();
+        HashOperations hashOperations = stringRedisTemplate.opsForHash();
 
         String key = "user:1000";
 
@@ -152,7 +152,7 @@ public class RedisDataTypesExample {
 
     public void listExample() {
 
-        ListOperations listOperations = redisTemplate.opsForList();
+        ListOperations listOperations = stringRedisTemplate.opsForList();
 
         String key = "list";
 
@@ -209,7 +209,7 @@ public class RedisDataTypesExample {
 
         String key = "myset";
 
-        SetOperations setOperations = redisTemplate.opsForSet();
+        SetOperations setOperations = stringRedisTemplate.opsForSet();
 
         // sadd myset value1 value2
         setOperations.add(key, "value1", "value2");
@@ -241,7 +241,7 @@ public class RedisDataTypesExample {
     public void sortedSetExample() {
         String key = "myzset";
 
-        ZSetOperations zSetOperations = redisTemplate.opsForZSet();
+        ZSetOperations zSetOperations = stringRedisTemplate.opsForZSet();
 
         // zadd myzset value1 10001
         boolean ret = zSetOperations.add(key, "value1", 1001d);
@@ -274,7 +274,7 @@ public class RedisDataTypesExample {
 
         String key = "bitmap";
 
-        ValueOperations valueOperations = redisTemplate.opsForValue();
+        ValueOperations valueOperations = stringRedisTemplate.opsForValue();
         // setbit 100 1
         valueOperations.setBit(key, 100, true);
 
@@ -283,13 +283,13 @@ public class RedisDataTypesExample {
 
         // bitcount key
         String value = valueOperations.get(key).toString();
-        redisTemplate.execute((RedisCallback) con ->
+        stringRedisTemplate.execute((RedisCallback) con ->
             con.bitCount(value.getBytes())
         );
 
         // bitop and dest dest1 dest2
         byte[] dest = new byte[1024];
-        redisTemplate.execute((RedisCallback) con ->
+        stringRedisTemplate.execute((RedisCallback) con ->
             con.bitOp(RedisStringCommands.BitOperation.AND, dest, "value1".getBytes(), "value2".getBytes())
         );
     }
@@ -298,7 +298,7 @@ public class RedisDataTypesExample {
 
         String key = "hll";
 
-        HyperLogLogOperations hyperLogLogOperations = redisTemplate.opsForHyperLogLog();
+        HyperLogLogOperations hyperLogLogOperations = stringRedisTemplate.opsForHyperLogLog();
 
         // pfadd hll a b c
         hyperLogLogOperations.add(key, "a", "b", "c");
@@ -314,7 +314,7 @@ public class RedisDataTypesExample {
 
         String key = "geo";
 
-        GeoOperations geoOperations = redisTemplate.opsForGeo();
+        GeoOperations geoOperations = stringRedisTemplate.opsForGeo();
 
         RedisGeoCommands.GeoLocation location1 = new RedisGeoCommands.GeoLocation("location1", new Point(111, 60));
 
