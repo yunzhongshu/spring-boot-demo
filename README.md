@@ -5,3 +5,6 @@
 
 2. redis的使用
     [详情](./docs/redis.md)
+3. java基础知识
+    [详情](./docs/java-basics.md)
+    
