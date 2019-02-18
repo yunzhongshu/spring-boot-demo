@@ -5,7 +5,7 @@ Java 程序在执行子类的构造方法之前，如果没有用 super() 来调
 > 见 demo-explore 模块中 com.zmdj.explore.basic.parent中的例子
 
 ### InputStream使用mark(), reset()来实现重复读
-####InputSteam中几个重要字段
+#### InputSteam中几个重要字段
 * pos 
 int类型,当前字节读取的位置
 * count
@@ -14,6 +14,16 @@ int类型,当前流的字节数
 int类型,最后一次mark()方法调用的位置
 * marklimit
 int类型,调用reset()回退的最大字节数
+#### markSupported()
+是否支持流标记和回退
+```java
+if (inputstream.markSupported()) {
+    inputstream.mark();
+    // ...
+    inputstream.reset();
+}
+```
+
 #### mark()
 ```java
         // 调用reset()方法最大回退的字节数
