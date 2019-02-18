@@ -56,6 +56,13 @@ when use redlock they need to be used
                 <version>${redisson.version}</version>
             </dependency>
 -->
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.6</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
