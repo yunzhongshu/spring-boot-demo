@@ -1,0 +1,35 @@
+dataSources:
+  ds0: !!org.apache.commons.dbcp2.BasicDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds0?nullNamePatternMatchesAll=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: 666666
+  ds1: !!org.apache.commons.dbcp2.BasicDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds1?nullNamePatternMatchesAll=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: 666666
+
+shardingRule:
+  tables:
+    t_order:
+      actualDataNodes: ds${0..1}.t_order${0..1}
+      tableStrategy:
+        inline:
+          shardingColumn: id
+          algorithmExpression: t_order${id % 2}
+      keyGeneratorColumnName: id
+  bindingTables:
+    - t_order
+  broadcastTables:
+    - t_config
+  defaultDataSourceName: ds0
+  defaultDatabaseStrategy:
+    inline:
+      shardingColumn: user_id
+      algorithmExpression: ds${user_id % 2}
+  defaultTableStrategy:
+    none:
+  defaultKeyGeneratorClassName: io.shardingsphere.core.keygen.DefaultKeyGenerator
+props:
+  sql.show: true

@@ -1,0 +1,87 @@
+logging:
+  path: logs
+
+#spring:
+#  # mysql配置
+#  datasource:
+#    druid:
+#      driver-class-name: com.mysql.jdbc.Driver
+#      initialSize: 2
+#      minIdle: 2
+#      maxActive: 400
+#      maxWait: 60000
+#      timeBetweenEvictionRunsMillis: 60000
+#      minEvictableIdleTimeMillis: 300000
+#      validationQuery: "SELECT 'x'"
+#      testWhileIdle: true
+#      testOnBorrow: false
+#      testOnReturn: false
+#      poolPreparedStatements: true
+#      maxPoolPreparedStatementPerConnectionSize: 20
+#      filters: log4j2,stat
+#      filter:
+#        config:
+#          enabled: true
+#        log4j2:
+#          enabled: true
+#        stat:
+#          db-type: mysql
+#          log-slow-sql: true
+#          slow-sql-millis: 0
+#          enabled: true
+#      one:
+#        url: jdbc:mysql://127.0.0.1:3306/ds0?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+#        username: root
+#        password: 666666
+#      two:
+#        url: jdbc:mysql://127.0.0.1:3306/ds1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+#        username: root
+#        password: 666666
+sharding:
+    jdbc:
+        config:
+            sharding:
+                binding-tables: t_order
+                broadcast-tables: t_config
+                default-database-strategy:
+                    inline:
+                        algorithm-expression: ds$->{user_id % 2}
+                        sharding-column: user_id
+                tables:
+                    t_order:
+                        actual-data-nodes: ds$->{0..1}.t_order$->{0..1}
+                        key-generator-column-name: id
+                        table-strategy:
+                            inline:
+                                algorithm-expression: t_order$->{id % 2}
+                                sharding-column: id
+        datasource:
+            ds0:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: '666666'
+                type: org.apache.commons.dbcp.BasicDataSource
+                url: jdbc:mysql://localhost:3306/ds0?nullNamePatternMatchesAll=true
+                username: root
+            ds1:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: '666666'
+                type: org.apache.commons.dbcp.BasicDataSource
+                url: jdbc:mysql://localhost:3306/ds1?nullNamePatternMatchesAll=true
+                username: root
+            names: ds0,ds1
+
+mybatis:
+  type-aliases-package: tk.mybatis.springboot.model
+  mapper-locations: classpath*:mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+mapper:
+  mappers: com.zmdj.db.common.BaseMapper
+  not-empty: false
+  identity: MYSQL
+  style: camelhump
+pagehelper:
+  helper-dialect: mysql
+  reasonable: false
+  support-methods-argument: true
+  params=count: countSql
